@@ -24,6 +24,7 @@ console.log(db)
 console.log(db.connection.readyState); //logs connection status to db - 0 is disconnected, 1 is connected, 2 is connecting
 
 var User = require('./app/models/user');
+var Consultation = require('./app/models/consultation');
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -117,6 +118,27 @@ router.route('/users/:user_id')
     });
   });
 
+router.route('/consultations')
+
+  // create a consultation (accessed at POST http://localhost:8080/api/consultations)
+  .post(function(req, res) {
+
+      var consultation = new Consultation();   // create a new instance of the Consultation model
+      consultation.description = req.body.description;  // set the consultation description (comes from the request)
+      consultation.patientID = req.body.patientID; //pass in id as string eg.JSON in request body = {"description":"TEST2", "patientID": "563a1a850d5fa4860f26d81c"}
+      consultation.drID = req.body.drID;
+
+      console.log(consultation);
+
+      // save the consultation and check for errors
+      consultation.save(function(err) {
+          if (err)
+            res.send(err);
+
+          res.json({ message: 'Consultation created!' });
+      });
+  })
+
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
@@ -125,4 +147,4 @@ app.use('/api', router);
 // START THE SERVER
 // =============================================================================
 app.listen(port);
-console.log('Magic happens on port ' + port);
+console.log('Server port is ' + port);
